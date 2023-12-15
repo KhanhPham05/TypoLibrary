@@ -1,11 +1,9 @@
 plugins {
-    id 'java'
-    id 'idea'
-    id 'net.neoforged.gradle.userdev' version '[7.0, 8.0)'
+    id 'net.neoforged.gradle.userdev' version '7.0.64'
 }
 
 project.version = modVersion
-project.group = group
+project.group = buildGroup
 
 base.archivesName = modId
 
@@ -23,20 +21,20 @@ runs {
     }
 
     client {
-        systemProperty 'forge.enabledGameTestNamespaces', project.modId
+        systemProperty 'forge.enabledGameTestNamespaces', modId
     }
 
     server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.modId
+        systemProperty 'forge.enabledGameTestNamespaces', modId
         programArgument '--nogui'
     }
 
     gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.modId
+        systemProperty 'forge.enabledGameTestNamespaces', modId
     }
 
     data {
-        programArguments.addAll '--mod', project.modId, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        programArguments.addAll '--mod', modId, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
@@ -53,7 +51,7 @@ tasks.withType(ProcessResources).configureEach {
             minecraft_version_range: "[${minecraftVersion}]",
             neo_version            : neoVersion,
             neo_version_range      : neoVersionRange,
-            loader_version_range   : "[47]",
+            loader_version_range   : "[1,)",
             mod_id                 : modId,
             mod_name               : modName,
             mod_license            : license,
@@ -68,4 +66,3 @@ tasks.withType(ProcessResources).configureEach {
         expand replaceProperties + [project: project]
     }
 }
-
