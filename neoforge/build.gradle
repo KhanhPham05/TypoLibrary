@@ -1,0 +1,59 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '6.0.7'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+minecraft.mappings channel: 'parchment', version: '2023.09.03-1.20.1'
+
+minecraft.runs {
+    configureEach {
+        workingDirectory project.file('run')
+        property 'forge.logging.markers', 'REGISTRIES'
+        property 'forge.logging.console.level', 'debug'
+        property 'mixin.env.remapRefMap', 'true'
+        property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+        mods {
+            typolibrary {
+                source sourceSets.main
+            }
+        }
+    }
+
+    server {
+        args "--nogui"
+    }
+
+    data {
+        args "--mod", modId, "--all", "--output", file("src/generated/resources/"), "--existing", file("src/main/resources/")
+    }
+}
+
+sourceSets.main.resources.srcDir("src/generated/resources")
+
+dependencies {
+    minecraft "net.neoforged:forge:1.20.1-${neoVersion}"
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var license = hasProperty("customLicense") ? property("customLicense") : "All Right Reversed"
+    var replaceProperties = [
+            minecraft_version      : minecraftVersion,
+            minecraft_version_range: "[${minecraftVersion}]",
+            neo_version            : neoVersion,
+            neo_version_range      : neoVersionRange,
+            loader_version_range   : "[47]",
+            mod_id                 : modId,
+            mod_name               : modName,
+            mod_license            : license,
+            mod_version            : modVersion,
+            mod_authors            : author,
+            mod_description        : modDescription,
+            pack_format_number     : packFormat,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
