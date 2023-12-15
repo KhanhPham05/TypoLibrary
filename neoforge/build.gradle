@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'idea'
     id 'net.neoforged.gradle.userdev' version '[7.0, 8.0)'
 }
 
@@ -11,6 +12,7 @@ base.archivesName = modId
 //minecraft.mappings channel: 'parchment', version: '2023.10.08-1.20.2'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
 runs {
     // applies to all the run configs below
     configureEach {
@@ -21,7 +23,6 @@ runs {
     }
 
     client {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
         systemProperty 'forge.enabledGameTestNamespaces', project.modId
     }
 
@@ -30,27 +31,19 @@ runs {
         programArgument '--nogui'
     }
 
-    // This run config launches GameTestServer and runs all registered gametests, then exits.
-    // By default, the server will crash when no gametests are provided.
-    // The gametest system is also enabled by default for other run configs under the /test command.
     gameTestServer {
         systemProperty 'forge.enabledGameTestNamespaces', project.modId
     }
 
     data {
-        // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-        // workingDirectory project.file('run-data')
-
-        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
         programArguments.addAll '--mod', project.modId, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
-
 sourceSets.main.resources.srcDir("src/generated/resources")
 
 dependencies {
-    implementation "net.neoforged:neoforged:${neoVersion}"
+    implementation "net.neoforged:neoforge:${neoVersion}"
 }
 
 tasks.withType(ProcessResources).configureEach {
